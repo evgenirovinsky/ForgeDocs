@@ -1,0 +1,84 @@
+stages:
+  - lint
+  - test
+  - build
+
+variables:
+  NODE_VERSION: "22"
+  AUTH_SECRET: "ci-secret-forgedocs-not-for-production"
+  AUTH_E2E_BYPASS: "true"
+  DATABASE_URL: "postgresql://forgedocs:forgedocs@postgres:5432/forgedocs?schema=public"
+  VALKEY_URL: "redis://valkey:6379"
+  S3_ENDPOINT: "http://minio:9000"
+  S3_REGION: "us-east-1"
+  S3_ACCESS_KEY_ID: "minioadmin"
+  S3_SECRET_ACCESS_KEY: "minioadmin"
+  S3_BUCKET: "forgedocs"
+  S3_FORCE_PATH_STYLE: "true"
+
+default:
+  image: node:${NODE_VERSION}-bookworm
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+      - .npm/
+
+lint:
+  stage: lint
+  script:
+    - npm ci
+    - npm run lint
+    - npm run typecheck
+
+unit:
+  stage: test
+  script:
+    - npm ci
+    - npm run test
+
+e2e:
+  stage: test
+  services:
+    - name: postgres:16-alpine
+      alias: postgres
+      variables:
+        POSTGRES_USER: forgedocs
+        POSTGRES_PASSWORD: forgedocs
+        POSTGRES_DB: forgedocs
+    - name: valkey/valkey:8-alpine
+      alias: valkey
+    - name: minio/minio:latest
+      alias: minio
+      command: ["server", "/data"]
+      variables:
+        MINIO_ROOT_USER: minioadmin
+        MINIO_ROOT_PASSWORD: minioadmin
+  variables:
+    AUTH_URL: "http://localhost:3000"
+    NEXTAUTH_URL: "http://localhost:3000"
+  before_script:
+    - apt-get update && apt-get install -y curl
+    - npm ci
+    - npx prisma migrate deploy
+    - npm run db:seed
+    - npx playwright install --with-deps chromium
+  script:
+    - npm run build
+    - npm run start &
+    - |
+      for i in $(seq 1 60); do
+        curl -sf http://localhost:3000/api/health && break
+        sleep 1
+      done
+    - npm run test:e2e
+
+build:
+  stage: build
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - .next/
+    expire_in: 1 week
