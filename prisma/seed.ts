@@ -1,9 +1,14 @@
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 const password = "password123";
+const defaultDevEmail =
+  process.env.DEFAULT_DEV_EMAIL?.trim() || "alice@acme.test";
+const defaultDevName =
+  process.env.DEFAULT_DEV_NAME?.trim() || "Dev Editor";
 
 async function main() {
   const passwordHash = await bcrypt.hash(password, 10);
@@ -23,8 +28,8 @@ async function main() {
 
   const master = await prisma.user.create({
     data: {
-      email: "evgeni.rovinsky@gmail.com",
-      name: "Evgeni Rovinsky",
+      email: defaultDevEmail,
+      name: defaultDevName,
       passwordHash,
     },
   });
@@ -90,7 +95,7 @@ async function main() {
   console.log("Seeded tenants: Acme, Globex");
   console.log("Dev password for all users:", password);
   console.log("Users:");
-  console.log("  evgeni.rovinsky@gmail.com  (editor, Acme) — Azure SSO");
+  console.log(`  ${defaultDevEmail}  (editor, Acme) — DEFAULT_DEV_EMAIL / Azure SSO`);
   console.log("  bob@acme.test              (viewer)");
   console.log("  dave@acme.test             (owner)");
   console.log("  carol@globex.test          (admin)");

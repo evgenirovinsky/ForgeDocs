@@ -22,10 +22,12 @@ Open http://localhost:3000 and sign in with a seeded user (password `password123
 
 | Email | Tenant | Role |
 |-------|--------|------|
-| evgeni.rovinsky@gmail.com | Acme | editor (Azure SSO) |
+| value of `DEFAULT_DEV_EMAIL` | Acme | editor (Azure SSO) |
 | bob@acme.test | Acme | viewer |
 | dave@acme.test | Acme | owner |
 | carol@globex.test | Globex | admin |
+
+Set `DEFAULT_DEV_EMAIL` in `.env` (see `.env.example`) to your Microsoft account email before `npm run db:seed` if you want Azure SSO against the seeded Acme editor.
 
 ## Demo script (interview)
 

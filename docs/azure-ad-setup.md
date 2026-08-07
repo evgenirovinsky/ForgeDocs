@@ -56,8 +56,15 @@ ForgeDocs requires a `Membership` row. After Azure login, if your email is not a
 
 For local testing, either:
 
-- Sign in with Azure using the **same email** as a seeded user (update that user’s email in the DB/seed to your Microsoft email), or
+- Set `DEFAULT_DEV_EMAIL` in `.env` to your Microsoft email, then run `npm run db:seed`, or
 - After creating the Entra user row, attach a membership manually / via seed
+
+Verify with:
+
+```bash
+npm run db:seed
+npx tsx scripts/verify-sso-user.ts
+```
 
 ## 5. Token API permissions (usually default)
 

@@ -1,10 +1,18 @@
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+const email = process.env.DEFAULT_DEV_EMAIL?.trim();
+
 async function main() {
+  if (!email) {
+    console.error("Set DEFAULT_DEV_EMAIL in the environment (or .env) first.");
+    process.exit(1);
+  }
+
   const user = await prisma.user.findUnique({
-    where: { email: "evgeni.rovinsky@gmail.com" },
+    where: { email },
     include: {
       memberships: { include: { tenant: true } },
       documents: { select: { id: true, title: true } },
@@ -16,23 +24,22 @@ async function main() {
       {
         email: user?.email,
         name: user?.name,
-        azureOid: user?.azureOid,
+        azureOid: user?.azureOid ?? null,
         memberships: user?.memberships.map((m) => ({
           tenant: m.tenant.slug,
           role: m.role,
         })),
-        docsCreated: user?.documents.length,
+        docsCreated: user?.documents.length ?? 0,
       },
       null,
       2,
     ),
   );
 
-  const acmeDocs = await prisma.document.findMany({
-    where: { tenant: { slug: "acme" } },
-    select: { title: true },
-  });
-  console.log("acmeDocs:", acmeDocs.map((d) => d.title));
+  if (!user) {
+    console.error(`No user found for DEFAULT_DEV_EMAIL=${email}`);
+    process.exit(1);
+  }
 }
 
 main()
