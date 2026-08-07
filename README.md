@@ -22,7 +22,7 @@ Open http://localhost:3000 and sign in with a seeded user (password `password123
 
 | Email | Tenant | Role |
 |-------|--------|------|
-| alice@acme.test | Acme | editor |
+| evgeni.rovinsky@gmail.com | Acme | editor (Azure SSO) |
 | bob@acme.test | Acme | viewer |
 | dave@acme.test | Acme | owner |
 | carol@globex.test | Globex | admin |
@@ -47,15 +47,15 @@ Open http://localhost:3000 and sign in with a seeded user (password `password123
 
 ## Azure AD
 
+Step-by-step App Registration: [docs/azure-ad-setup.md](docs/azure-ad-setup.md).
+
 Set in `.env`:
 
 - `AUTH_MICROSOFT_ENTRA_ID_ID`
 - `AUTH_MICROSOFT_ENTRA_ID_SECRET`
-- `AUTH_MICROSOFT_ENTRA_ID_ISSUER` (`https://login.microsoftonline.com/<tenant-id>/v2.0`)
+- `AUTH_MICROSOFT_ENTRA_ID_ISSUER` (`https://login.microsoftonline.com/consumers/v2.0` for personal accounts, or `.../common/v2.0`)
 
 SSO users must already have a `Membership` row (invite/seed). The login page shows **Sign in with Microsoft** when these env vars are set.
-
-For Playwright/CI, set `AUTH_E2E_BYPASS=true` and password `e2e-bypass`.
 
 ## Architecture
 

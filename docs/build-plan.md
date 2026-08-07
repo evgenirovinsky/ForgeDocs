@@ -119,6 +119,26 @@ Goal: a deployable environment that matches the job stack more closely — manag
 
 Local Docker Compose remains the default for day-to-day development.
 
+### Phase 7 — Product depth (was “out of scope”)
+
+Features that move ForgeDocs beyond the interview MVP toward a more believable docs product:
+
+- **Realtime collaboration** — presence / cursors (or conflict-safe concurrent editing baseline)
+- **Per-document ACL** — grants beyond tenant role (share viewer/editor on a single doc)
+- **Invite emails** — invite users into a tenant by email (link + membership provisioning)
+- **Full Grafana dashboards** — Prometheus → Grafana panels for HTTP latency, export success/fail, error rates
+- **Production AWS deploy hardening** — beyond Phase 6 smoke deploy: IAM roles (prefer over long-lived keys), HTTPS, backups, basic runbooks
+
+### Phase 8 — UX, value, and product evaluation
+
+Polish and product thinking so the demo feels intentional, not only stacked:
+
+- **Improve styles** — cohesive visual system (typography, spacing, dark/light if needed), editor chrome, empty states
+- **Improve UX** — clearer navigation, save/export feedback, role-aware UI, onboarding for first SSO login
+- **Add real-value features** — e.g. search, doc templates, version history, comments, trash/restore (pick a few that matter in interviews)
+- **Discuss further improvements** — backlog of intentional follow-ups (tech debt, security, scale)
+- **Evaluate against similar products** — compare ForgeDocs to Notion / Confluence / Google Docs / SharePoint-style tools; document gaps, differentiators, and what you’d build next and why
+
 ## Interview demo script
 
 1. Login as Acme editor → create/edit TipTap doc
@@ -127,7 +147,5 @@ Local Docker Compose remains the default for day-to-day development.
 4. Login as viewer → edit denied
 5. Show `/api/metrics` and green GitLab pipeline
 6. (Phase 6) Show deployed URL with Azure AD login + real S3 exports
+7. (Phase 7+) Call out one deeper product feature if implemented
 
-## Out of scope (unless leftover time)
-
-Realtime collab, per-document ACL beyond role, invite emails, full Grafana dashboards.

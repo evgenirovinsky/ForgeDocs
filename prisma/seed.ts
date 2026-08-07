@@ -21,10 +21,10 @@ async function main() {
     data: { slug: "globex", name: "Globex Inc" },
   });
 
-  const alice = await prisma.user.create({
+  const master = await prisma.user.create({
     data: {
-      email: "alice@acme.test",
-      name: "Alice Editor",
+      email: "evgeni.rovinsky@gmail.com",
+      name: "Evgeni Rovinsky",
       passwordHash,
     },
   });
@@ -53,7 +53,7 @@ async function main() {
   await prisma.membership.createMany({
     data: [
       { userId: dave.id, tenantId: acme.id, role: "owner" },
-      { userId: alice.id, tenantId: acme.id, role: "editor" },
+      { userId: master.id, tenantId: acme.id, role: "editor" },
       { userId: bob.id, tenantId: acme.id, role: "viewer" },
       { userId: carol.id, tenantId: globex.id, role: "admin" },
     ],
@@ -74,7 +74,7 @@ async function main() {
       tenantId: acme.id,
       title: "Acme Handbook",
       content: emptyDoc,
-      createdById: alice.id,
+      createdById: master.id,
     },
   });
 
@@ -90,10 +90,10 @@ async function main() {
   console.log("Seeded tenants: Acme, Globex");
   console.log("Dev password for all users:", password);
   console.log("Users:");
-  console.log("  alice@acme.test  (editor)");
-  console.log("  bob@acme.test    (viewer)");
-  console.log("  dave@acme.test   (owner)");
-  console.log("  carol@globex.test (admin)");
+  console.log("  evgeni.rovinsky@gmail.com  (editor, Acme) — Azure SSO");
+  console.log("  bob@acme.test              (viewer)");
+  console.log("  dave@acme.test             (owner)");
+  console.log("  carol@globex.test          (admin)");
 }
 
 main()

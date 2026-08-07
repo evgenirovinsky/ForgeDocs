@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useState } from "react";
 
 const DEMO_USERS = [
-  { email: "alice@acme.test", label: "Alice — Acme editor" },
+  { email: "evgeni.rovinsky@gmail.com", label: "Evgeni — Acme editor (Azure)" },
   { email: "bob@acme.test", label: "Bob — Acme viewer" },
   { email: "dave@acme.test", label: "Dave — Acme owner" },
   { email: "carol@globex.test", label: "Carol — Globex admin" },
@@ -14,7 +14,7 @@ const DEMO_USERS = [
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const [email, setEmail] = useState("alice@acme.test");
+  const [email, setEmail] = useState("evgeni.rovinsky@gmail.com");
   const [password, setPassword] = useState("password123");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

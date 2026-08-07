@@ -11,7 +11,7 @@ async function login(page: import("@playwright/test").Page, email: string) {
 }
 
 test("editor can create a document", async ({ page }) => {
-  await login(page, "alice@acme.test");
+  await login(page, "dave@acme.test");
   await page.getByTestId("create-document").click();
   await page.waitForURL("**/documents/**");
   await expect(page.getByTestId("export-docx")).toBeVisible();
