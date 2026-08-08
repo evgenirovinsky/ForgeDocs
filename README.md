@@ -18,6 +18,16 @@ npm run db:seed
 npm run dev
 ```
 
+### Production (Railway)
+
+Live app: https://web-production-ea5e6.up.railway.app
+
+Add this Azure Entra redirect URI (Web):
+
+```
+https://web-production-ea5e6.up.railway.app/api/auth/callback/microsoft-entra-id
+```
+
 Open http://localhost:3000 and sign in with a seeded user (password `password123`):
 
 | Email | Tenant | Role |
