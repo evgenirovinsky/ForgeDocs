@@ -26,6 +26,8 @@ Production auth is **Azure AD only** (`ALLOW_CREDENTIALS_LOGIN=false`). Local `.
 
 Prometheus (scrapes `/api/metrics`): https://prometheus-production-3ffb.up.railway.app
 
+Grafana (ForgeDocs overview dashboard): https://grafana-production-4898.up.railway.app — login `admin` / password in Railway var `GF_SECURITY_ADMIN_PASSWORD`. Local compose: http://localhost:3001 (`admin` / `admin`).
+
 Object storage in production: **AWS S3** bucket `forgedocs-673396345120` (`eu-central-1`). Local docker-compose still uses MinIO.
 
 Add this Azure Entra redirect URI (Web):

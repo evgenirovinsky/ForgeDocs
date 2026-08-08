@@ -10,7 +10,7 @@ Browser → Next.js (App Router)
             ├─ Prisma → PostgreSQL
             ├─ Valkey → export job status cache
             ├─ MinIO/S3 → images + Word/PDF artifacts
-            └─ /api/metrics → Prometheus
+            └─ /api/metrics → Prometheus → Grafana
 ```
 
 ## Tenant isolation
@@ -59,8 +59,9 @@ Middleware uses Edge-safe `auth.config.ts` (no Prisma). Full providers live in `
 
 ## Observability
 
-- `prom-client` default metrics + HTTP duration histogram + export counters
-- Scraped by Prometheus (`prometheus.yml` → `host.docker.internal:3000/api/metrics`)
+- `prom-client` default metrics + HTTP duration histogram (`forgedocs_http_request_duration_seconds`) + export counters (`forgedocs_export_jobs_total`)
+- Scraped by Prometheus (local: `prometheus.yml` → `host.docker.internal:3000/api/metrics`; Railway: private + public scrape jobs)
+- Grafana provisioned dashboards (`ops/grafana`) → Prometheus; Railway service + local Compose on `:3001`
 
 ## Local services (`docker compose`)
 
@@ -70,3 +71,4 @@ Middleware uses Edge-safe `auth.config.ts` (no Prisma). Full providers live in `
 | Valkey | 6379 |
 | MinIO API / Console | 9000 / 9001 |
 | Prometheus | 9090 |
+| Grafana | 3001 |
