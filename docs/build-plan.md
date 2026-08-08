@@ -123,7 +123,7 @@ Features that move ForgeDocs beyond the interview MVP toward a more believable d
 
 - **Realtime collaboration** — presence / cursors (or conflict-safe concurrent editing baseline)
 - **Per-document ACL** ✅ — elevate-only grants: tenant viewers can be granted `editor` on a single doc (creator / admin / owner manage via Share UI)
-- **Invite emails** — invite users into a tenant by email (link + membership provisioning)
+- **Invite emails** ✅ — admin/owner invites on `/team`; demo delivery returns/logs the accept link (Resend/SMTP later); accept provisions membership then login
 - **Full Grafana dashboards** — Prometheus → Grafana panels for HTTP latency, export success/fail, error rates
 - **Production AWS deploy hardening** — beyond Phase 6 smoke deploy: IAM roles (prefer over long-lived keys), HTTPS, backups, basic runbooks
 

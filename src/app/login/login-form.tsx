@@ -25,7 +25,9 @@ export function LoginForm({
 }: LoginFormProps) {
   const router = useRouter();
   const params = useSearchParams();
-  const [email, setEmail] = useState(defaultDevEmail);
+  const invited = params.get("invited") === "1";
+  const invitedEmail = params.get("email");
+  const [email, setEmail] = useState(invitedEmail || defaultDevEmail);
   const [password, setPassword] = useState("password123");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -57,6 +59,18 @@ export function LoginForm({
           Multi-tenant documents with TipTap, RBAC, and export pipelines.
         </p>
       </div>
+
+      {invited && (
+        <p
+          className="rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900"
+          data-testid="invite-accepted"
+        >
+          Invite accepted
+          {invitedEmail ? ` for ${invitedEmail}` : ""}. Sign in with Microsoft
+          (same email) or credentials if enabled (password{" "}
+          <code>password123</code>).
+        </p>
+      )}
 
       {credentialsEnabled ? (
         <>

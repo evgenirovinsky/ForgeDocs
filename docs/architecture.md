@@ -31,10 +31,13 @@ API routes obtain the session via `requireSession()` and never accept a client-s
 | Create | editor |
 | Update / delete / upload | editor **or** per-document `DocumentGrant` with `editor` |
 | Manage document grants | document creator, or tenant admin/owner |
+| Invite members to tenant | admin/owner (`TenantInvite`) |
 
-Enforced in `src/server/rbac.ts`, `src/server/document-access.ts`, and API helpers (`forbidUnlessWriter` / `forbidUnlessDocWriter`).
+Enforced in `src/server/rbac.ts`, `src/server/document-access.ts`, `src/server/invites.ts`, and API helpers (`forbidUnlessWriter` / `forbidUnlessDocWriter` / `forbidUnlessTenantAdmin`).
 
 **Per-document ACL (elevate-only):** tenant members still see all docs. A `viewer` may receive an explicit `DocumentGrant` that elevates them to editor on one document. Grants cannot reduce access below the tenant role. Share targets must already be members of the same tenant.
+
+**Tenant invites (demo delivery):** admin/owner creates an invite on `/team`. The API returns an accept link (also logged via `src/server/mail.ts` — no SMTP/Resend yet). Opening `/invites/accept?token=…` provisions `User` + `Membership`, then the invitee signs in (Azure with matching email, or credentials with `password123`). Accept the invite **before** first SSO. Multi-tenant users keep the oldest membership as primary until a tenant switcher exists.
 
 ## Editor & export
 

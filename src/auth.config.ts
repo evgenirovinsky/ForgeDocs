@@ -14,7 +14,8 @@ export const authConfig = {
       const isPublic =
         pathname.startsWith("/api/auth") ||
         pathname.startsWith("/api/health") ||
-        pathname.startsWith("/api/metrics");
+        pathname.startsWith("/api/metrics") ||
+        pathname.startsWith("/invites/accept");
 
       if (isPublic) return true;
       if (pathname.startsWith("/api/")) return true; // API routes enforce auth themselves

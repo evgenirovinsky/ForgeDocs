@@ -77,6 +77,32 @@ test("document creator can manage grants via Share UI", async ({ page }) => {
   await expect(page.getByTestId("grant-row")).toContainText("bob@acme.test");
 });
 
+test("tenant owner can invite a user who then signs in", async ({ page }) => {
+  await login(page, "dave@acme.test");
+  await page.getByTestId("nav-team").click();
+  await page.waitForURL("**/team");
+
+  const inviteEmail = `invitee-${Date.now()}@acme.test`;
+  await page.getByTestId("invite-email").fill(inviteEmail);
+  await page.getByTestId("invite-role").selectOption("viewer");
+  await page.getByTestId("invite-submit").click();
+  await expect(page.getByTestId("invite-url-box")).toBeVisible();
+  const inviteUrl = await page.getByTestId("invite-url-box").locator("code").innerText();
+  expect(inviteUrl).toContain("/invites/accept?token=");
+
+  await page.goto(inviteUrl);
+  await page.waitForURL("**/login?**");
+  await expect(page.getByTestId("invite-accepted")).toBeVisible();
+
+  await page.getByTestId("login-email").fill(inviteEmail);
+  await page.getByTestId("login-password").fill(
+    process.env.AUTH_E2E_BYPASS === "true" ? "e2e-bypass" : "password123",
+  );
+  await page.getByTestId("login-submit").click();
+  await page.waitForURL("**/documents");
+  await expect(page.getByText("Acme")).toBeVisible();
+});
+
 test("tenant isolation hides other tenant documents", async ({ page }) => {
   await login(page, "carol@globex.test");
   const rows = page.getByTestId("document-row");

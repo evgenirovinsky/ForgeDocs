@@ -31,6 +31,13 @@ enum DocumentPermission {
   editor
 }
 
+enum InviteStatus {
+  pending
+  accepted
+  revoked
+  expired
+}
+
 model Tenant {
   id        String   @id @default(cuid())
   slug      String   @unique
@@ -40,6 +47,7 @@ model Tenant {
 
   memberships Membership[]
   documents   Document[]
+  invites     TenantInvite[]
 }
 
 model User {
@@ -55,6 +63,7 @@ model User {
   documents       Document[]      @relation("DocumentCreator")
   documentGrants  DocumentGrant[] @relation("GrantSubject")
   grantsCreated   DocumentGrant[] @relation("GrantCreator")
+  invitesSent     TenantInvite[]  @relation("InviteCreator")
 }
 
 model Membership {
@@ -121,4 +130,25 @@ model ExportJob {
 
   @@index([documentId])
   @@index([status])
+}
+
+model TenantInvite {
+  id          String       @id @default(cuid())
+  tenantId    String
+  email       String
+  role        Role
+  tokenHash   String
+  status      InviteStatus @default(pending)
+  invitedById String
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  tenant    Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  invitedBy User   @relation("InviteCreator", fields: [invitedById], references: [id])
+
+  @@index([tokenHash])
+  @@index([tenantId, email])
+  @@index([tenantId, status])
 }

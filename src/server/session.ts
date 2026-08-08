@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { createTenantPrisma } from "@/server/db";
-import { canWriteDocuments } from "@/server/rbac";
+import { canManageTenant, canWriteDocuments } from "@/server/rbac";
 import type { Role } from "@prisma/client";
 
 export type AppSession = {
@@ -36,6 +36,15 @@ export function tenantDb(session: AppSession) {
 
 export function forbidUnlessWriter(session: AppSession): NextResponse | null {
   if (!canWriteDocuments(session.role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+  return null;
+}
+
+export function forbidUnlessTenantAdmin(
+  session: AppSession,
+): NextResponse | null {
+  if (!canManageTenant(session.role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   return null;

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { auth, signOut } from "@/auth";
 import Link from "next/link";
 import { createTenantPrisma } from "@/server/db";
-import { canWriteDocuments } from "@/server/rbac";
+import { canManageTenant, canWriteDocuments } from "@/server/rbac";
 import { CreateDocumentButton } from "@/components/CreateDocumentButton";
 
 export default async function DocumentsPage() {
@@ -14,6 +14,7 @@ export default async function DocumentsPage() {
     orderBy: { updatedAt: "desc" },
   });
   const canWrite = canWriteDocuments(session.user.role);
+  const canManage = canManageTenant(session.user.role);
 
   return (
     <main className="min-h-screen bg-stone-50">
@@ -28,19 +29,30 @@ export default async function DocumentsPage() {
               {session.user.email}
             </p>
           </div>
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/login" });
-            }}
-          >
-            <button
-              type="submit"
-              className="rounded border px-3 py-1.5 text-sm hover:bg-stone-100"
+          <div className="flex items-center gap-3">
+            {canManage && (
+              <Link
+                href="/team"
+                data-testid="nav-team"
+                className="rounded border px-3 py-1.5 text-sm hover:bg-stone-100"
+              >
+                Team
+              </Link>
+            )}
+            <form
+              action={async () => {
+                "use server";
+                await signOut({ redirectTo: "/login" });
+              }}
             >
-              Sign out
-            </button>
-          </form>
+              <button
+                type="submit"
+                className="rounded border px-3 py-1.5 text-sm hover:bg-stone-100"
+              >
+                Sign out
+              </button>
+            </form>
+          </div>
         </div>
       </header>
 

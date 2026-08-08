@@ -15,6 +15,7 @@ async function main() {
 
   await prisma.exportJob.deleteMany();
   await prisma.documentGrant.deleteMany();
+  await prisma.tenantInvite.deleteMany();
   await prisma.document.deleteMany();
   await prisma.membership.deleteMany();
   await prisma.user.deleteMany();
