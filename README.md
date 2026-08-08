@@ -28,7 +28,7 @@ Prometheus (scrapes `/api/metrics`): https://prometheus-production-3ffb.up.railw
 
 Grafana (ForgeDocs overview dashboard): https://grafana-production-4898.up.railway.app — login `admin` / password in Railway var `GF_SECURITY_ADMIN_PASSWORD`. Local compose: http://localhost:3001 (`admin` / `admin`).
 
-Object storage in production: **AWS S3** bucket `forgedocs-673396345120` (`eu-central-1`). Local docker-compose still uses MinIO.
+Object storage in production: **AWS S3** bucket `forgedocs-673396345120` (`eu-central-1`). Local docker-compose still uses MinIO. Hardening checklist + runbook: [`docs/ops-runbook.md`](docs/ops-runbook.md).
 
 Add this Azure Entra redirect URI (Web):
 

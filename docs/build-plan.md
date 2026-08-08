@@ -125,7 +125,7 @@ Features that move ForgeDocs beyond the interview MVP toward a more believable d
 - **Per-document ACL** ✅ — elevate-only grants: tenant viewers can be granted `editor` on a single doc (creator / admin / owner manage via Share UI)
 - **Invite emails** ✅ — admin/owner invites on `/team`; demo delivery returns/logs the accept link (Resend/SMTP later); accept provisions membership then login
 - **Full Grafana dashboards** ✅ — Railway Grafana provisioned against Prometheus; ForgeDocs overview (HTTP rate/latency/status, export jobs, 5xx by route)
-- **Production AWS deploy hardening** — beyond Phase 6 smoke deploy: IAM roles (prefer over long-lived keys), HTTPS, backups, basic runbooks
+- **Production AWS deploy hardening** ✅ — S3 public-block + versioning + HTTPS-only policy; least-privilege IAM user; ops runbook (Railway backups + key rotation). Full IAM OIDC / instance roles remain future (Railway still uses access keys today).
 
 ### Phase 8 — UX, value, and product evaluation
 

@@ -70,6 +70,10 @@ Middleware uses Edge-safe `auth.config.ts` (no Prisma). Full providers live in `
 - Scraped by Prometheus (local: `prometheus.yml` → `host.docker.internal:3000/api/metrics`; Railway: private + public scrape jobs)
 - Grafana provisioned dashboards (`ops/grafana`) → Prometheus; Railway service + local Compose on `:3001`
 
+## Production hardening
+
+See [`docs/ops-runbook.md`](ops-runbook.md) for deploy, health, S3 lockdown (block public + versioning + HTTPS-only), key rotation, and Railway Postgres backup notes. Object storage in production uses AWS S3 with a dedicated IAM user (`forgedocs-s3`), not MinIO.
+
 ## Local services (`docker compose`)
 
 | Service | Port |
