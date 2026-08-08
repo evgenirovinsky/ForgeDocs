@@ -79,7 +79,7 @@ export function LoginForm({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 data-testid="login-password"
-                autoComplete="current-current-password"
+                autoComplete="current-password"
               />
             </label>
             {error && <p className="text-sm text-red-600">{error}</p>}
