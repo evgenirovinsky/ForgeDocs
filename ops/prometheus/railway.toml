@@ -3,6 +3,5 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "/bin/sh -c '/bin/prometheus --config.file=/etc/prometheus/prometheus.yml --web.listen-address=0.0.0.0:$PORT --storage.tsdb.path=/prometheus --web.enable-lifecycle'"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
