@@ -55,7 +55,8 @@ Set `DEFAULT_DEV_EMAIL` in `.env` (see `.env.example`) to your Microsoft account
 4. Login as Acme viewer → create blocked; **Acme Draft** read-only / PATCH 403; **Acme Handbook** writable via elevate grant
 5. Open Share on a doc you created → grant another tenant member editor access
 6. As owner/admin open **Team** → invite by email → copy accept link (logged server-side; no SMTP yet)
-7. Open `/api/metrics` and show Prometheus scraping on `:9090`
+7. Open the same doc in two browsers → presence avatars + remote carets (Valkey)
+8. Open Grafana / `/api/metrics` and Prometheus scrape
 
 ## Scripts
 

@@ -37,6 +37,26 @@ body {
   margin: 1rem 0;
 }
 
+.remote-caret {
+  display: inline-block;
+  height: 1.1em;
+  vertical-align: text-bottom;
+}
+
+.remote-caret-label {
+  position: absolute;
+  top: -1.35em;
+  left: -1px;
+  white-space: nowrap;
+  color: #fff;
+  font-size: 10px;
+  line-height: 1.2;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  pointer-events: none;
+}
+
 .ProseMirror td,
 .ProseMirror th {
   border: 1px solid #d6d3d1;

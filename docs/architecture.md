@@ -57,6 +57,13 @@ PDF: TipTap JSON → HTML → Puppeteer
 
 Middleware uses Edge-safe `auth.config.ts` (no Prisma). Full providers live in `src/auth.ts` (Node).
 
+## Presence (realtime baseline)
+
+- Per-document presence in Valkey (`presence:doc:{id}` hash + pub/sub channel)
+- `POST /api/documents/:id/presence` heartbeat/cursor; `GET` same path as SSE for fan-out
+- TipTap remote carets/selections via decoration plugin; avatars in the editor chrome
+- Document content still last-write-wins via PATCH autosave (no Yjs/CRDT yet)
+
 ## Observability
 
 - `prom-client` default metrics + HTTP duration histogram (`forgedocs_http_request_duration_seconds`) + export counters (`forgedocs_export_jobs_total`)

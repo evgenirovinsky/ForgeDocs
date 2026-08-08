@@ -57,6 +57,11 @@ export default async function DocumentPage({ params }: Props) {
           initialTitle={document.title}
           initialContent={document.content as object}
           readOnly={readOnly}
+          user={{
+            id: session.user.id,
+            name: session.user.name ?? session.user.email ?? "You",
+            email: session.user.email ?? "",
+          }}
         />
       </div>
     </main>
