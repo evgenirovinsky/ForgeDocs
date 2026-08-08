@@ -24,11 +24,20 @@ FROM node:22-bookworm-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN apt-get update && apt-get install -y openssl ca-certificates chromium \
+RUN apt-get update && apt-get install -y \
+    openssl \
+    ca-certificates \
+    chromium \
+    fonts-liberation \
+    fonts-noto-core \
+    --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV HOME=/tmp
+ENV XDG_CONFIG_HOME=/tmp/.chromium
+ENV XDG_CACHE_HOME=/tmp/.chromium-cache
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 

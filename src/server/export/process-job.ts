@@ -15,7 +15,25 @@ async function renderPdf(html: string): Promise<Buffer> {
   const browser = await puppeteer.default.launch({
     headless: true,
     executablePath,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    dumpio: false,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--disable-crash-reporter",
+      "--disable-extensions",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--font-render-hinting=none",
+      "--single-process",
+    ],
+    env: {
+      ...process.env,
+      HOME: "/tmp",
+      XDG_CONFIG_HOME: "/tmp/.chromium",
+      XDG_CACHE_HOME: "/tmp/.chromium-cache",
+    },
   });
   try {
     const page = await browser.newPage();

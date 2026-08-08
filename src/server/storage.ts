@@ -18,13 +18,14 @@ let client: S3Client | null = null;
 export function getS3Client(): S3Client {
   if (client) return client;
   const forcePathStyle = process.env.S3_FORCE_PATH_STYLE === "true";
+  const endpoint = process.env.S3_ENDPOINT?.trim() || undefined;
   client = new S3Client({
-    region: process.env.S3_REGION ?? "us-east-1",
-    endpoint: process.env.S3_ENDPOINT || undefined,
+    region: process.env.S3_REGION?.trim() || "us-east-1",
+    ...(endpoint ? { endpoint } : {}),
     forcePathStyle,
     credentials: {
-      accessKeyId: required("S3_ACCESS_KEY_ID"),
-      secretAccessKey: required("S3_SECRET_ACCESS_KEY"),
+      accessKeyId: required("S3_ACCESS_KEY_ID").trim(),
+      secretAccessKey: required("S3_SECRET_ACCESS_KEY").trim(),
     },
   });
   return client;
