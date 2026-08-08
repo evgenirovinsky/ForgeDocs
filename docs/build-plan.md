@@ -103,19 +103,17 @@ Seed two tenants (Acme / Globex) with users in different roles so isolation and 
 - Multi-stage Dockerfile; README with architecture + demo script
 - Confluence-style `docs/architecture.md` (tooling stand-in)
 
-### Phase 6 — Production path (cloud deploy)
+### Phase 6 — Production path (cloud deploy) ✅
 
-**Current local baseline:** Docker Compose provides Postgres, Valkey, MinIO, and Prometheus; the Next.js app runs on the host (`npm run dev`) against those services.
+**Done on Railway:** app + managed Postgres + Redis + AWS S3 + Azure AD SSO; Prometheus scrapes public/private `/api/metrics`; GitHub `main` auto-deploys `web` and `prometheus`.
 
-Goal: a deployable environment that matches the job stack more closely — managed Postgres, Redis-compatible Valkey/Redis, real AWS S3, and Azure AD as the primary auth path.
+**Local baseline unchanged:** Docker Compose provides Postgres, Valkey, MinIO, and Prometheus; `npm run dev` against those services.
 
-- **Hosting:** Deploy the Next.js app (and optional worker) to a cloud host (e.g. Railway or AWS); keep the multi-stage `Dockerfile` as the deploy artifact
-- **Database:** Managed PostgreSQL; run Prisma migrations on deploy; point `DATABASE_URL` at the cloud DB
-- **Cache:** Managed Valkey/Redis; point `VALKEY_URL` at it
-- **Object storage:** Real AWS S3 bucket; drop MinIO for this environment; keep the same S3 SDK client (`S3_ENDPOINT` unset / AWS defaults, path-style off)
-- **Auth:** Azure AD (Entra ID) as the primary sign-in in production; disable or gate credentials + `AUTH_E2E_BYPASS` behind non-production env only; document Entra app registration + seeded/invited memberships
-- **Config:** Production secrets via host env / secret store; document required vars in README
-- **Smoke check:** Deployed login (SSO), tenant isolation, TipTap save, Word/PDF export to S3, `/api/metrics` reachable (or scraped)
+- **Hosting:** Railway (`Dockerfile` for `web`, `ops/prometheus` for scraper); GitHub repo connected → deploy on push to `main`
+- **Database / cache:** Railway Postgres + Redis (`DATABASE_URL`, `VALKEY_URL`)
+- **Object storage:** AWS S3 (`forgedocs-673396345120`); no MinIO in prod; `S3_ENDPOINT` unset, path-style off
+- **Auth:** Azure AD only in production (`ALLOW_CREDENTIALS_LOGIN=false`); credentials remain for local/CI
+- **Smoke check:** SSO login, tenant isolation, TipTap save, Word/PDF → S3, Prometheus scrape UP
 
 Local Docker Compose remains the default for day-to-day development.
 

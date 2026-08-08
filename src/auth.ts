@@ -5,6 +5,7 @@ import * as bcrypt from "bcryptjs";
 import type { Role } from "@prisma/client";
 import { prisma } from "@/server/db";
 import { authConfig } from "@/auth.config";
+import { credentialsLoginEnabled } from "@/server/auth-flags";
 import type { JWT } from "@auth/core/jwt";
 
 export type AppUserClaims = {
@@ -54,29 +55,49 @@ type AuthProviders = NonNullable<
   import("next-auth").NextAuthConfig["providers"]
 >;
 
-const providers: AuthProviders = [
-  Credentials({
-    id: "credentials",
-    name: "Credentials",
-    credentials: {
-      email: { label: "Email", type: "email" },
-      password: { label: "Password", type: "password" },
-    },
-    async authorize(credentials) {
-      const email = credentials?.email;
-      const password = credentials?.password;
-      if (
-        !email ||
-        !password ||
-        typeof email !== "string" ||
-        typeof password !== "string"
-      ) {
-        return null;
-      }
+const providers: AuthProviders = [];
 
-      if (process.env.AUTH_E2E_BYPASS === "true" && password === "e2e-bypass") {
+if (credentialsLoginEnabled()) {
+  providers.push(
+    Credentials({
+      id: "credentials",
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const email = credentials?.email;
+        const password = credentials?.password;
+        if (
+          !email ||
+          !password ||
+          typeof email !== "string" ||
+          typeof password !== "string"
+        ) {
+          return null;
+        }
+
+        if (process.env.AUTH_E2E_BYPASS === "true" && password === "e2e-bypass") {
+          const user = await prisma.user.findUnique({ where: { email } });
+          if (!user) return null;
+          const membership = await loadPrimaryMembership(user.id);
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            tenantId: membership.tenantId,
+            tenantSlug: membership.tenant.slug,
+            tenantName: membership.tenant.name,
+            role: membership.role,
+          };
+        }
+
         const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) return null;
+        if (!user?.passwordHash) return null;
+        const ok = await bcrypt.compare(password, user.passwordHash);
+        if (!ok) return null;
+
         const membership = await loadPrimaryMembership(user.id);
         return {
           id: user.id,
@@ -87,26 +108,10 @@ const providers: AuthProviders = [
           tenantName: membership.tenant.name,
           role: membership.role,
         };
-      }
-
-      const user = await prisma.user.findUnique({ where: { email } });
-      if (!user?.passwordHash) return null;
-      const ok = await bcrypt.compare(password, user.passwordHash);
-      if (!ok) return null;
-
-      const membership = await loadPrimaryMembership(user.id);
-      return {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        tenantId: membership.tenantId,
-        tenantSlug: membership.tenant.slug,
-        tenantName: membership.tenant.name,
-        role: membership.role,
-      };
-    },
-  }),
-];
+      },
+    }),
+  );
+}
 
 if (
   process.env.AUTH_MICROSOFT_ENTRA_ID_ID &&

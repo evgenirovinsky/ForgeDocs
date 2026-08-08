@@ -3,6 +3,11 @@ import type { NextConfig } from "next";
 const defaultDevEmail =
   process.env.DEFAULT_DEV_EMAIL?.trim() || "alice@acme.test";
 
+const credentialsEnabled =
+  process.env.ALLOW_CREDENTIALS_LOGIN === "true" ||
+  (process.env.ALLOW_CREDENTIALS_LOGIN !== "false" &&
+    process.env.NODE_ENV !== "production");
+
 const nextConfig: NextConfig = {
   serverExternalPackages: ["puppeteer", "@prisma/client", "bcryptjs"],
   env: {
@@ -12,8 +17,8 @@ const nextConfig: NextConfig = {
           process.env.AUTH_MICROSOFT_ENTRA_ID_SECRET,
       ),
     ),
-    // Expose DEFAULT_DEV_EMAIL to the client login UI (single source of truth).
     NEXT_PUBLIC_DEFAULT_DEV_EMAIL: defaultDevEmail,
+    NEXT_PUBLIC_ALLOW_CREDENTIALS_LOGIN: String(credentialsEnabled),
   },
 };
 
