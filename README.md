@@ -22,6 +22,8 @@ npm run dev
 
 Live app: https://web-production-ea5e6.up.railway.app
 
+Object storage in production: **AWS S3** bucket `forgedocs-673396345120` (`eu-central-1`). Local docker-compose still uses MinIO.
+
 Add this Azure Entra redirect URI (Web):
 
 ```
