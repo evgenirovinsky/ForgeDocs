@@ -27,11 +27,14 @@ API routes obtain the session via `requireSession()` and never accept a client-s
 
 | Action | Minimum role |
 |--------|----------------|
-| Read / list / export | viewer |
-| Create / update / delete / upload | editor |
-| Tenant admin (future) | admin |
+| Read / list / export | viewer (any tenant member) |
+| Create | editor |
+| Update / delete / upload | editor **or** per-document `DocumentGrant` with `editor` |
+| Manage document grants | document creator, or tenant admin/owner |
 
-Enforced in `src/server/rbac.ts` and API helpers (`forbidUnlessWriter`).
+Enforced in `src/server/rbac.ts`, `src/server/document-access.ts`, and API helpers (`forbidUnlessWriter` / `forbidUnlessDocWriter`).
+
+**Per-document ACL (elevate-only):** tenant members still see all docs. A `viewer` may receive an explicit `DocumentGrant` that elevates them to editor on one document. Grants cannot reduce access below the tenant role. Share targets must already be members of the same tenant.
 
 ## Editor & export
 

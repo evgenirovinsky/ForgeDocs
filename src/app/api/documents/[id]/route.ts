@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import {
-  forbidUnlessWriter,
-  requireSession,
-  tenantDb,
-} from "@/server/session";
+import { requireSession, tenantDb } from "@/server/session";
+import { forbidUnlessDocWriter } from "@/server/document-access";
 import { observeHttp } from "@/server/metrics";
 
 const updateSchema = z.object({
@@ -43,7 +40,7 @@ export async function PATCH(request: Request, { params }: Params) {
     return session;
   }
 
-  const forbidden = forbidUnlessWriter(session);
+  const forbidden = await forbidUnlessDocWriter(session, id);
   if (forbidden) {
     observeHttp("PATCH", "/api/documents/:id", 403, (Date.now() - started) / 1000);
     return forbidden;
@@ -86,7 +83,7 @@ export async function DELETE(_request: Request, { params }: Params) {
     return session;
   }
 
-  const forbidden = forbidUnlessWriter(session);
+  const forbidden = await forbidUnlessDocWriter(session, id);
   if (forbidden) {
     observeHttp("DELETE", "/api/documents/:id", 403, (Date.now() - started) / 1000);
     return forbidden;

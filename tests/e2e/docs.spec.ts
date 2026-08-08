@@ -18,19 +18,63 @@ test("editor can create a document", async ({ page }) => {
   await expect(page.getByRole("textbox").first()).toBeVisible();
 });
 
-test("viewer cannot patch documents via API", async ({ page }) => {
+test("viewer cannot patch documents without an elevate grant", async ({
+  page,
+}) => {
   await login(page, "bob@acme.test");
   await expect(page.getByTestId("create-document")).toHaveCount(0);
 
   const list = await page.request.get("/api/documents");
   expect(list.ok()).toBeTruthy();
   const { documents } = await list.json();
-  expect(documents.length).toBeGreaterThan(0);
+  const draft = documents.find(
+    (d: { title: string }) => d.title === "Acme Draft",
+  );
+  expect(draft).toBeTruthy();
 
-  const patch = await page.request.patch(`/api/documents/${documents[0].id}`, {
+  const patch = await page.request.patch(`/api/documents/${draft.id}`, {
     data: { title: "Should fail" },
   });
   expect(patch.status()).toBe(403);
+});
+
+test("viewer can patch a document with an editor elevate grant", async ({
+  page,
+}) => {
+  await login(page, "bob@acme.test");
+
+  const list = await page.request.get("/api/documents");
+  const { documents } = await list.json();
+  const handbook = documents.find(
+    (d: { title: string }) => d.title === "Acme Handbook",
+  );
+  expect(handbook).toBeTruthy();
+
+  const patch = await page.request.patch(`/api/documents/${handbook.id}`, {
+    data: { title: "Acme Handbook (elevated)" },
+  });
+  expect(patch.status()).toBe(200);
+
+  await page.goto(`/documents/${handbook.id}`);
+  await expect(page.getByText("(read-only)")).toHaveCount(0);
+  await expect(page.getByTestId("share-document")).toHaveCount(0);
+});
+
+test("document creator can manage grants via Share UI", async ({ page }) => {
+  await login(page, process.env.DEFAULT_DEV_EMAIL || "alice@acme.test");
+  const list = await page.request.get("/api/documents");
+  const { documents } = await list.json();
+  const draft = documents.find(
+    (d: { title: string }) => d.title === "Acme Draft",
+  );
+  expect(draft).toBeTruthy();
+
+  await page.goto(`/documents/${draft.id}`);
+  await page.getByTestId("share-document").click();
+  await expect(page.getByTestId("share-panel")).toBeVisible();
+  await page.getByTestId("share-email").fill("bob@acme.test");
+  await page.getByTestId("share-submit").click();
+  await expect(page.getByTestId("grant-row")).toContainText("bob@acme.test");
 });
 
 test("tenant isolation hides other tenant documents", async ({ page }) => {

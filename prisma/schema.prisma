@@ -26,6 +26,11 @@ enum ExportStatus {
   failed
 }
 
+enum DocumentPermission {
+  viewer
+  editor
+}
+
 model Tenant {
   id        String   @id @default(cuid())
   slug      String   @unique
@@ -46,8 +51,10 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  memberships Membership[]
-  documents   Document[]   @relation("DocumentCreator")
+  memberships     Membership[]
+  documents       Document[]      @relation("DocumentCreator")
+  documentGrants  DocumentGrant[] @relation("GrantSubject")
+  grantsCreated   DocumentGrant[] @relation("GrantCreator")
 }
 
 model Membership {
@@ -74,11 +81,30 @@ model Document {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  tenant    Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  createdBy User        @relation("DocumentCreator", fields: [createdById], references: [id])
+  tenant    Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdBy User            @relation("DocumentCreator", fields: [createdById], references: [id])
   exports   ExportJob[]
+  grants    DocumentGrant[]
 
   @@index([tenantId])
+}
+
+model DocumentGrant {
+  id         String              @id @default(cuid())
+  documentId String
+  userId     String
+  permission DocumentPermission
+  createdById String
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+
+  document  Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user      User     @relation("GrantSubject", fields: [userId], references: [id], onDelete: Cascade)
+  createdBy User     @relation("GrantCreator", fields: [createdById], references: [id])
+
+  @@unique([documentId, userId])
+  @@index([documentId])
+  @@index([userId])
 }
 
 model ExportJob {

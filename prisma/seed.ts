@@ -14,6 +14,7 @@ async function main() {
   const passwordHash = await bcrypt.hash(password, 10);
 
   await prisma.exportJob.deleteMany();
+  await prisma.documentGrant.deleteMany();
   await prisma.document.deleteMany();
   await prisma.membership.deleteMany();
   await prisma.user.deleteMany();
@@ -74,10 +75,19 @@ async function main() {
     ],
   };
 
-  await prisma.document.create({
+  const acmeHandbook = await prisma.document.create({
     data: {
       tenantId: acme.id,
       title: "Acme Handbook",
+      content: emptyDoc,
+      createdById: master.id,
+    },
+  });
+
+  await prisma.document.create({
+    data: {
+      tenantId: acme.id,
+      title: "Acme Draft",
       content: emptyDoc,
       createdById: master.id,
     },
@@ -92,11 +102,21 @@ async function main() {
     },
   });
 
+  // Demo ACL: tenant viewer elevated to editor on one document.
+  await prisma.documentGrant.create({
+    data: {
+      documentId: acmeHandbook.id,
+      userId: bob.id,
+      permission: "editor",
+      createdById: master.id,
+    },
+  });
+
   console.log("Seeded tenants: Acme, Globex");
   console.log("Dev password for all users:", password);
   console.log("Users:");
   console.log(`  ${defaultDevEmail}  (editor, Acme) — DEFAULT_DEV_EMAIL / Azure SSO`);
-  console.log("  bob@acme.test              (viewer)");
+  console.log("  bob@acme.test              (viewer; editor grant on Acme Handbook)");
   console.log("  dave@acme.test             (owner)");
   console.log("  carol@globex.test          (admin)");
 }

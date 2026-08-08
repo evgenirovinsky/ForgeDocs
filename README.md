@@ -39,7 +39,7 @@ Open http://localhost:3000 and sign in with a seeded user (password `password123
 | Email | Tenant | Role |
 |-------|--------|------|
 | value of `DEFAULT_DEV_EMAIL` | Acme | editor (Azure SSO) |
-| bob@acme.test | Acme | viewer |
+| bob@acme.test | Acme | viewer (editor grant on Acme Handbook) |
 | dave@acme.test | Acme | owner |
 | carol@globex.test | Globex | admin |
 
@@ -50,8 +50,9 @@ Set `DEFAULT_DEV_EMAIL` in `.env` (see `.env.example`) to your Microsoft account
 1. Login as Acme editor → create/edit a TipTap doc (autosave)
 2. Export Word + PDF (artifacts in MinIO, signed URL)
 3. Login as Globex admin → Acme docs are absent
-4. Login as Acme viewer → edit/create blocked (UI + API 403)
-5. Open `/api/metrics` and show Prometheus scraping on `:9090`
+4. Login as Acme viewer → create blocked; **Acme Draft** read-only / PATCH 403; **Acme Handbook** writable via elevate grant
+5. Open Share on a doc you created → grant another tenant member editor access
+6. Open `/api/metrics` and show Prometheus scraping on `:9090`
 
 ## Scripts
 

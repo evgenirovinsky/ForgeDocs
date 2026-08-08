@@ -80,6 +80,7 @@ export function DocumentEditor({
   async function onUploadImage(file: File) {
     const form = new FormData();
     form.append("file", file);
+    form.append("documentId", documentId);
     const res = await fetch("/api/uploads", { method: "POST", body: form });
     if (!res.ok) throw new Error("upload failed");
     const data = (await res.json()) as { url: string };

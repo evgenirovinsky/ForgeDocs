@@ -122,7 +122,7 @@ Local Docker Compose remains the default for day-to-day development.
 Features that move ForgeDocs beyond the interview MVP toward a more believable docs product:
 
 - **Realtime collaboration** — presence / cursors (or conflict-safe concurrent editing baseline)
-- **Per-document ACL** — grants beyond tenant role (share viewer/editor on a single doc)
+- **Per-document ACL** ✅ — elevate-only grants: tenant viewers can be granted `editor` on a single doc (creator / admin / owner manage via Share UI)
 - **Invite emails** — invite users into a tenant by email (link + membership provisioning)
 - **Full Grafana dashboards** — Prometheus → Grafana panels for HTTP latency, export success/fail, error rates
 - **Production AWS deploy hardening** — beyond Phase 6 smoke deploy: IAM roles (prefer over long-lived keys), HTTPS, backups, basic runbooks
@@ -145,5 +145,5 @@ Polish and product thinking so the demo feels intentional, not only stacked:
 4. Login as viewer → edit denied
 5. Show `/api/metrics` and green GitLab pipeline
 6. (Phase 6) Show deployed URL with Azure AD login + real S3 exports
-7. (Phase 7+) Call out one deeper product feature if implemented
+7. (Phase 7+) Call out one deeper product feature if implemented — e.g. elevate Bob (viewer) to editor on Acme Handbook via Share / `DocumentGrant`
 

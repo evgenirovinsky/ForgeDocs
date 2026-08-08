@@ -3,19 +3,26 @@ import {
   forbidUnlessWriter,
   requireSession,
 } from "@/server/session";
+import { forbidUnlessDocWriter } from "@/server/document-access";
 import { tenantObjectKey, uploadObject, getSignedDownloadUrl } from "@/server/storage";
 
 export async function POST(request: Request) {
   const session = await requireSession();
   if (session instanceof NextResponse) return session;
 
-  const forbidden = forbidUnlessWriter(session);
-  if (forbidden) return forbidden;
-
   const form = await request.formData();
   const file = form.get("file");
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "file required" }, { status: 400 });
+  }
+
+  const documentId = form.get("documentId");
+  if (typeof documentId === "string" && documentId.length > 0) {
+    const forbidden = await forbidUnlessDocWriter(session, documentId);
+    if (forbidden) return forbidden;
+  } else {
+    const forbidden = forbidUnlessWriter(session);
+    if (forbidden) return forbidden;
   }
 
   const bytes = Buffer.from(await file.arrayBuffer());
