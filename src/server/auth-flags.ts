@@ -9,8 +9,9 @@ export function credentialsLoginEnabled(): boolean {
 }
 
 export function azureAdConfigured(): boolean {
+  // Bracket access avoids Next.js build-time inlining of process.env.FOO.
+  const env = process.env;
   return Boolean(
-    process.env.AUTH_MICROSOFT_ENTRA_ID_ID &&
-      process.env.AUTH_MICROSOFT_ENTRA_ID_SECRET,
+    env["AUTH_MICROSOFT_ENTRA_ID_ID"] && env["AUTH_MICROSOFT_ENTRA_ID_SECRET"],
   );
 }
